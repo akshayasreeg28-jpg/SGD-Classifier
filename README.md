@@ -19,86 +19,47 @@ Predict class labels for test data and evaluate the classifier performance using
 
 ## Program:
 ```
-# Import Libraries
 import pandas as pd
-import numpy as np
+from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import SGDClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, confusion_matrix
+import matplotlib.pyplot as plt
 
-# Load Dataset
-data = pd.read_csv("Placement_Data.csv")
+iris = load_iris()
 
-# Separate Features and Target
-X = data.drop(["status", "salary", "sl_no"], axis=1)
-y = data["status"]
+X = iris.data
 
-# One-Hot Encoding for Categorical Columns
-X = pd.get_dummies(X, drop_first=True)
+y = iris.target
 
-# Save Feature Names
-feature_names = X.columns
-
-# Train-Test Split
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# Feature Scaling (keep as DataFrame)
-scaler = StandardScaler()
-X_train_scaled = pd.DataFrame(
-    scaler.fit_transform(X_train),
-    columns=feature_names
-)
-X_test_scaled = pd.DataFrame(
-    scaler.transform(X_test),
-    columns=feature_names
-)
+model = SGDClassifier()
 
-# Create SGD Classifier
-model = SGDClassifier(max_iter=1000, tol=1e-3, random_state=42)
+model.fit(X_train, y_train)
 
-# Train Model
-model.fit(X_train_scaled, y_train)
+y_pred = model.predict(X_test)
 
-# Predict on Test Data
-y_pred = model.predict(X_test_scaled)
-
-# Accuracy & Reports
 print("Accuracy:", accuracy_score(y_test, y_pred))
 
-print("\nConfusion Matrix:")
+print("Confusion Matrix:")
 print(confusion_matrix(y_test, y_pred))
 
-print("\nClassification Report:")
-print(classification_report(y_test, y_pred))
+new_flower = [[5.1, 3.5, 1.4, 0.2]]
 
-#  Correct New Student Prediction
+prediction = model.predict(new_flower)
 
-# Create empty student with all features = 0
-new_student_dict = dict.fromkeys(feature_names, 0)
+print("Predicted Species:", iris.target_names[prediction][0])
 
-# Fill ONLY numerical features (example values)
-new_student_dict['ssc_p'] = 67
-new_student_dict['hsc_p'] = 91
-new_student_dict['degree_p'] = 58
-new_student_dict['etest_p'] = 88
-new_student_dict['mba_p'] = 67
+plt.scatter(X[:,0], X[:,1], c=y)
 
-# Convert to DataFrame with same columns
-new_student_df = pd.DataFrame([new_student_dict])
+plt.xlabel("Sepal Length")
+plt.ylabel("Sepal Width")
+plt.title("Iris Flower Classification")
 
-# Scale using same scaler
-new_student_scaled = pd.DataFrame(
-    scaler.transform(new_student_df),
-    columns=feature_names
-)
-
-# Predict
-pred = model.predict(new_student_scaled)
-print("\nPredicted Status:", pred[0])
-
+plt.show()
 /*
 Program to implement the prediction of iris species using SGD Classifier.
 Developed by: Akshaya Sree G
@@ -107,7 +68,8 @@ RegisterNumber: 212225230011
 ```
 
 ## Output:
-<img width="967" height="730" alt="image" src="https://github.com/user-attachments/assets/e39aa5a8-3fe1-4a0e-94d9-7e2674faf5df" />
+<img width="568" height="455" alt="WhatsApp Image 2026-05-25 at 10 28 56" src="https://github.com/user-attachments/assets/1c067cf1-7e5c-4f94-8e36-0a709c4b91a3" />
+
 
 
 
